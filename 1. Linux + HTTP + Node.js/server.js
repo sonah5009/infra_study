@@ -46,6 +46,17 @@ const server = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
     res.end(JSON.stringify({ status: 'ok' }));
 
+  } else if (req.url === '/api/info' && req.method === 'GET') {
+    const osInfo = {
+      type: os.type(),
+      hostname: os.hostname(),
+      cpu_count: os.cpus().length,
+      total_memory_mb: Math.floor(os.totalmem() / (1024 * 1024)),
+      uptime_hours: Number((os.uptime() / 3600).toFixed(2))
+    };
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify(osInfo, null, 2));
+    
   } else {
     res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('Not Found');
