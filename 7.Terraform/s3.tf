@@ -51,12 +51,17 @@ resource "aws_s3_bucket_policy" "public_read" {
 
 # 2
 # S3 Object - 프론트엔드 HTML 파일 업로드
+# index.html 업로드 (S3 Object)
 resource "aws_s3_object" "index" {
   bucket       = aws_s3_bucket.static_site.id
   key          = "index.html"
-  source       = "index.html" # 실제 업로드할 HTML 파일의 경로로 수정해주세요. (예: "../1. Linux + HTTP + Node.js/assets/week1.html")
-  content_type = "text/html"
-
-  # 파일이 변경될 때마다 Terraform이 이를 감지하고 재업로드 하도록 etag 설정
-  etag = filemd5("index.html") # source 파라미터와 동일한 경로로 지정해주세요.
+  # 로컬 파일을 S3로 업로드
+  source       = "${path.module}/index.html"
+  # 브라우저에서 HTML로 열리도록
+  content_type = "text/html; charset=utf-8"
+  # 파일 내용이 바뀌면 Terraform이 변경을 감지하도록
+  etag         = filemd5("${path.module}/index.html")
+  depends_on = [
+    aws_s3_bucket_policy.public_read
+  ]
 }
