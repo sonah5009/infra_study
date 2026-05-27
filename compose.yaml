@@ -1,8 +1,8 @@
 services:
   app:
     build:
-      context: ../1. Linux + HTTP + Node.js
-      dockerfile: ../3. Docker/Dockerfile
+      context: .
+      dockerfile: ./Dockerfile
     # ports:
     #   - "3000:3000"
 
