@@ -15,17 +15,34 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+      - name: Detect Node project
+        id: node_project
+        shell: bash
+        run: |
+          if [[ -f package-lock.json && -f package.json ]]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Setup Node.js
+        if: steps.node_project.outputs.enabled == 'true'
         uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
+        if: steps.node_project.outputs.enabled == 'true'
         run: npm ci
 
       - name: Run tests
+        if: steps.node_project.outputs.enabled == 'true'
         run: npm test
+
+      - name: Skip Node build
+        if: steps.node_project.outputs.enabled != 'true'
+        run: echo "No package.json/package-lock.json at repository root. Skipping npm-based CI steps."
 
   codeql:
     name: CodeQL Security Scan
