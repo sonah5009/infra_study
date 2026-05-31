@@ -1,12 +1,19 @@
 terraform {
-    required_providers {
-        aws = {
-            source = "hashicorp/aws"
-            version = "~> 5.0"
-        }
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
     }
+  }
+
+  backend "s3" {
+    bucket  = "choesuna-terraform-state"
+    key     = "infra-study/terraform.tfstate"
+    region  = "ap-northeast-2"
+    encrypt = true
+  }
 }
 
 provider "aws" {
-    region = "ap-northeast-2"
+  region = var.aws_region
 }
